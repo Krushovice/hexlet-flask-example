@@ -98,7 +98,7 @@ ul.list-posts .announce {
 .profile-load {
     margin-top: 10px;
     overflow: hidden;
-    max-width: 130px;
+    max-width: 150px;
 }
 .proile-load input[type=submit],
 input[type=file] {
@@ -116,4 +116,4 @@ ul.profile-info {
     padding: 0;
     color: #7E652F;
 }
-ul.profile-info li {margin-top: 10px;}
+ul.profile-info li {margin-top: 1px;}

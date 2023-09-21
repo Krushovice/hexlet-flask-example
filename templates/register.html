@@ -6,10 +6,20 @@
 <div class="flash {{cat}}">{{msg}}</div>
 {% endfor %}
 <form action="/register" method="post" class="form-contact">
-<p><label>Имя:</label><input type="text" required name="name" value="">
-<p><label>Email:</label><input type="email" required name="email" value="">
-<p><label>Пароль:</label><input type="text" required name="psw" value="">
-<p><label>Повтор пароля:</label><input type="text" required name="psw2" value="">
-<p><input type="submit" value="Регистрация">
+{{ form.hidden_tag() }}
+{% for field in form if field.name not in ["csrf_token", "submit"] -%}
+<p>{{ field.label() }}
+    {% if field.errors %}
+        {{field(class="invalid")}}
+    <span class="invalid-feedback">
+        {% for e in field.errors %}
+        {{e}}
+        {% endfor %}
+    </span>
+    {% else %}
+        {{ field()}}
+    {% endif %}
+{% endfor %}
+<p>{{form.submit()}}
 </form>
 {% endblock %}

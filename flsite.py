@@ -2,9 +2,9 @@ import sqlite3
 import os
 
 from database.db import FDataBase
-from utility.forms import LoginForm
+from utility.forms import LoginForm, RegisterForm
 from utility.UserLogin import UserLogin
-from utility.validate import validate_post, validate_user
+from utility.validate import validate_post
 
 from flask import (Flask, flash, render_template, request,
                    redirect, url_for, get_flashed_messages,
@@ -228,21 +228,21 @@ def log_out():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
-        user = request.form.to_dict()
-        if validate_user(user):
-            hash = generate_password_hash(user['psw'])
-            res = dbase.addUser(user['name'], user['email'], hash)
-            if res:
-                flash('Вы успешно зарегистрированы', 'success')
-                return redirect(url_for('log_in'))
-            else:
-                flash('Ошибка добавления в БД', 'error')
+    form = RegisterForm()
+    if form.validate_on_submit():
+
+        hash = generate_password_hash(form.psw.data)
+        res = dbase.addUser(form.name.data, form.email.data, hash)
+        if res:
+            flash('Вы успешно зарегистрированы', 'success')
+            return redirect(url_for('log_in'))
         else:
-            flash('Неверно заполнены поля', 'error')
+            flash('Ошибка добавления в БД', 'error')
+
     return render_template('register.html',
                            title='Регистрация',
-                           menu=dbase.getMenu())
+                           menu=dbase.getMenu(),
+                           form=form)
 
 
 if __name__ == '__main__':
