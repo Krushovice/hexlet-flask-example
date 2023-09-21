@@ -1,6 +1,7 @@
 from flask import url_for
+from flask_login import UserMixin
 
-class UserLogin():
+class UserLogin(UserMixin):
     def fromDB(self, user_id, db):
         self.__user = db.getUser(user_id)
         return self
@@ -12,7 +13,7 @@ class UserLogin():
     def get_id(self):
         return str(self.__user['id'])
 
-    def getNName(self):
+    def getName(self):
         if self.__user:
             return self.__user['name']
         return "Без имени"
@@ -38,4 +39,10 @@ class UserLogin():
         return img
 
     def verifyExt(self, filename):
-        pass
+        # frmt = filename.rsplit('.', 1)[1]
+        # if frmt == 'png' or frmt == 'PNG':
+        #     return True
+        # return False
+        if filename.endswith('.png') or filename.endswith('.PNG'):
+            return True
+        return False

@@ -2,7 +2,7 @@
 
 {% block content %}
 {{super()}}
-{% for cat, messages in get_flashed_messages(True) %}
+{% for cat, msg in get_flashed_messages(True) %}
 <div class="flash {{cat}}">{{msg}}</div>
 {% endfor %}
 <table border="0" class="profile-table">
@@ -16,10 +16,10 @@
         </div>
     </td>
     <td valign="top" class="profile-panel">
-        <p><a href="{{url_for('logout')}}">Выйти из профиля</a>
+        <p><a href="{{url_for('log_out')}}">Выйти из профиля</a>
         <ul class="profile-info">
         <li>{{current_user.getName()}}</li>
-        <li>{{current_user.getName()}}</li>
+        <li>{{current_user.getEmail()}}</li>
         </ul>
     </td></tr>
 </table>

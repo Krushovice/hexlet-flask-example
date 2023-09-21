@@ -2,11 +2,14 @@ import sqlite3
 import os
 
 from database.db import FDataBase
+from utility.forms import LoginForm
 from utility.UserLogin import UserLogin
+from utility.validate import validate_post, validate_user
+
 from flask import (Flask, flash, render_template, request,
                    redirect, url_for, get_flashed_messages,
                    make_response, session, abort, g)
-from utility.validate import validate_post, validate_user
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import (LoginManager, login_user,
                          login_required, current_user, logout_user)
@@ -161,14 +164,13 @@ def profile():
 def log_in():
     if current_user.is_authenticated:
         return redirect(url_for('profile'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = dbase.getUserByEmail(form.email.data)
 
-    if request.method == 'POST':
-        user_data = request.form.to_dict()
-        user = dbase.getUserByEmail(user_data['email'])
-
-        if user and check_password_hash(user['psw'], user_data['psw']):
+        if user and check_password_hash(user['psw'], form.psw.data):
             user_log = UserLogin().create(user)
-            rm = True if request.form.get('remainme') else False
+            rm = form.remember.data
             login_user(user_log, remember=rm)
             return redirect(request.args.get('next') or url_for('profile'))
 
@@ -176,7 +178,8 @@ def log_in():
 
     return render_template('login.html',
                            title='Авторизация',
-                           menu=dbase.getMenu())
+                           menu=dbase.getMenu(),
+                           form=form)
 
 
 @app.route('/userava')
