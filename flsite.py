@@ -5,6 +5,7 @@ from database.db import FDataBase
 from utility.forms import LoginForm, RegisterForm
 from utility.UserLogin import UserLogin
 from utility.validate import validate_post
+from admin.admin import admin
 
 from flask import (Flask, flash, render_template, request,
                    redirect, url_for, get_flashed_messages,
@@ -25,6 +26,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path,
                                              'database/flstite.db')))
+app.register_blueprint(admin, url_prefix='/admin')
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'log_in'
