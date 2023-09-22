@@ -1,4 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+import sqlite3
+from flask import (Blueprint, render_template, request,
+                   redirect, url_for, flash, session, g,
+                   current_app)
 
 admin = Blueprint('admin', __name__,
                   template_folder='templates',
@@ -16,8 +19,23 @@ def isLogged():
 def logout_admin():
     session.pop('admin_logged', None)
 
+
+db = None
+@admin.before_request
+def before_request():
+    """Установление соединения с БД перед выполнением запроса"""
+    global db
+    db = g.get('link_db')
+
+@admin.teardown_request
+def teardown_request(request):
+    global db
+    db = None
+    return request
+
 menu = [{'url': '.index', 'title': 'Панель'},
-        {'url': '.logout', 'title': 'Выйти'}]
+        {'url': '.logout', 'title': 'Выйти'},
+        {'url': '.list_pubs', 'title': 'Список статей'}]
 
 @admin.route('/')
 def index():
@@ -50,3 +68,22 @@ def logout():
 
     logout_admin()
     return redirect(url_for('.login'))
+
+@admin.route('/list-pubs')
+def list_pubs():
+    if not isLogged():
+        return redirect(url_for('.login'))
+
+    list = []
+    if db:
+        try:
+            cur = db.cursor()
+            cur.execute(f"SELECT title, text, url FROM posts")
+            list = cur.fetchall()
+        except sqlite3.Error as e:
+            print("Ошибка получения статей из БД "+str(e))
+
+    return render_template('admin/listpubs.html',
+                            title='Список статей',
+                            menu=menu,
+                            list=list)
