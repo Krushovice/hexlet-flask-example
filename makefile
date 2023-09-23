@@ -1,2 +1,2 @@
 start:
-	flask --app flsite --debug run --port 8000
+	gunicorn --workers=4 --bind=127.0.0.1:8000 flsite:app
