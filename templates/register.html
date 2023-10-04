@@ -7,8 +7,9 @@
 {% endfor %}
 <form action="/register" method="post" class="form-contact">
 {{ form.hidden_tag() }}
+
 {% for field in form if field.name not in ["csrf_token", "submit"] -%}
-<p>{{ field.label() }}
+    <p>{{ field.label() }}
     {% if field.errors %}
         {{field(class="invalid")}}
     <span class="invalid-feedback">
@@ -20,6 +21,7 @@
         {{ field()}}
     {% endif %}
 {% endfor %}
-<p>{{form.submit()}}
+
+<p>{{ form.submit(value="Зарегистрироваться") }}
 </form>
 {% endblock %}
